@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}{{ car.название }}{% endblock %}
+{% block content %}
+<div class="container my-4">
+    <div class="row">
+        <div class="col-lg-6">
+            <img src="{{ url_for('static', filename='uploads/' + car.фото) }}" class="img-fluid car-image" alt="{{ car.название }}">
+        </div>
+        <div class="col-lg-6">
+            <h1 class="car-title">{{ car.название }}</h1>
+            <p class="car-category">Категория: {{ car.категория }}</p>
+            <p class="car-plate">Гос номер: {{ car.гос_номер }}</p>
+
+            <!-- Добавленный блок характеристик -->
+            <div class="car-specs card p-3">
+                <h2 class="section-title">Характеристики</h2>
+                <ul>
+                    <li>Марка: <strong>{{ car.марка }}</strong></li>
+                    <li>Модель: <strong>{{ car.модель }}</strong></li>
+                    <li>Места: <strong>{{ car.мест }}</strong></li>
+                    <li>Двигатель: <strong>{{ car.двигатель }}</strong></li>
+                    <li>Коробка передач: <strong>{{ car.коробка }}</strong></li>
+                    <li>Объём: <strong>{{ car.объем }} л</strong></li>
+                    <li>Привод: <strong>{{ car.привод }}</strong></li>
+                    <li>Мощность: <strong>{{ car.мощность }} л.с.</strong></li>
+                    <li>Цвет: <strong>{{ car.цвет }}</strong></li>
+                    <li>Кузов: <strong>{{ car.кузов }}</strong></li>
+                    <li>Тип топлива: <strong>{{ car.топливо }}</strong></li>
+                </ul>
+            </div>
+
+            <h3 class="section-title">Цены на аренду</h3>
+            <ul class="list-group list-group-flush car-prices">
+                {% for price in prices %}
+                <li class="list-group-item">{{ price.срок }}: {{ price.цена }} руб.</li>
+                {% endfor %}
+            </ul>
+
+            <h3 class="section-title">Забронировать автомобиль</h3>
+            <form id="rental-form" class="mt-3">
+                <div class="form-group">
+                    <label for="start_date">Выберите период аренды</label>
+                    <input type="date" class="form-control" id="start_date" name="start_date" required>
+                    <input type="date" class="form-control" id="end_date" name="end_date" required>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="1000" id="full_protection" name="features">
+                    <label class="form-check-label" for="full_protection">Полная защита (1000 руб.)</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="500" id="unlimited_mileage" name="features">
+                    <label class="form-check-label" for="unlimited_mileage">Безлимитный пробег (500 руб.)</label>
+                </div>
+                <h4>Итоговая сумма: <span id="total_cost">0</span> руб.</h4>
+                <button type="submit" class="btn btn-primary mt-3 btn-book">Забронировать авто</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Скрипт для расчета итоговой суммы -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('rental-form');
+    const startDateInput = document.getElementById('start_date');
+    const endDateInput = document.getElementById('end_date');
+    const totalCostElement = document.getElementById('total_cost');
+    const featureCheckboxes = document.querySelectorAll('input[name="features"]');
+
+    function calculateTotalCost() {
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+        let totalCost = 0;
+
+        if (startDate && endDate && endDate >= startDate) {
+            const diffTime = Math.abs(endDate - startDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // включаем дату окончания
+
+            // Найти цену за выбранный период аренды
+            let pricePerDay = 0;
+            {% for price in prices %}
+                if (diffDays <= {{ price.срок }}) {
+                    pricePerDay = {{ price.цена }} / {{ price.срок }};
+                    break;
+                }
+            {% endfor %}
+
+            totalCost = pricePerDay * diffDays;
+
+            // Добавить стоимость дополнительных функций
+            featureCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    totalCost += parseFloat(checkbox.value);
+                }
+            });
+        }
+
+        totalCostElement.textContent = totalCost.toFixed(2);
+    }
+
+    startDateInput.addEventListener('change', calculateTotalCost);
+    endDateInput.addEventListener('change', calculateTotalCost);
+    featureCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', calculateTotalCost);
+    });
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        // Здесь можно добавить логику для обработки формы, например отправку данных на сервер
+        alert('Форма отправлена. Итоговая сумма: ' + totalCostElement.textContent + ' руб.');
+    });
+});
+</script>
+{% endblock %}

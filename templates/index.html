@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Список автомобилей{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 class="my-4" style="color: #007bff;">Список автомобилей</h1>
+    <h2 class="my-4" style="color: #28a745;">Категории</h2>
+    <ul class="list-group list-group-horizontal my-4">
+        <li class="list-group-item"><a href="{{ url_for('show_category', category='Эконом') }}">Эконом</a></li>
+        <li class="list-group-item"><a href="{{ url_for('show_category', category='Комфорт') }}">Комфорт</a></li>
+        <li class="list-group-item"><a href="{{ url_for('show_category', category='Премиум') }}">Премиум</a></li>
+    </ul>
+    <div class="row">
+        {% for car in cars %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 car-card fade-in">
+                <img class="card-img-top" src="{{ url_for('static', filename='uploads/' + car['фото']) }}" alt="{{ car['название'] }}">
+                <div class="card-body">
+                    <h4 class="card-title">{{ car['название'] }}</h4>
+                    <p class="card-text">Категория: {{ car['категория'] }}</p>
+                </div>
+                <div class="card-footer">
+                    <a href="{{ url_for('car_detail', car_id=car['id']) }}" class="btn btn-primary">Подробнее</a>
+                    <form action="{{ url_for('add_to_favorites', car_id=car['id']) }}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-outline-danger">
+                            <i class="fas fa-heart"></i> Избранное
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <a href="{{ url_for('upload_car') }}" class="btn btn-success my-4">Добавить автомобиль</div>
+</div>
+{% endblock %}

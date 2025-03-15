@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Результат аренды{% endblock %}
+{% block content %}
+{% include 'navbar.html' %}
+<div class="container">
+    <h1 class="my-4" style="color: #007bff;">Результат аренды</h1>
+    <p>Общая стоимость аренды: <strong>{{ total_cost }}</strong> руб.</p>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary my-4">Вернуться к списку</a>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Профиль{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Профиль пользователя</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Информация о пользователе</h3>
+            <ul class="list-group">
+                <li class="list-group-item">Имя: {{ user.name }}</li>
+                <li class="list-group-item">Email: {{ user.email }}</li>
+                <li class="list-group-item">Роль: {{ user.role }}</li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h3>Избранные автомобили</h3>
+            {% if session.get('favorites') %}
+                <ul class="list-group">
+                    {% for car_id in session.get('favorites') %}
+                        <li class="list-group-item">
+                            <a href="{{ url_for('car_detail', car_id=car_id) }}">Автомобиль {{ car_id }}</a>
+                            <form action="{{ url_for('remove_from_favorites', car_id=car_id) }}" method="post" style="display: inline;">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="fas fa-heart-broken"></i> Убрать из избранного
+                                </button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Нет избранных автомобилей.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

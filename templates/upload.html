@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Добавить автомобиль{% endblock %}
+{% block content %}
+{% include 'navbar.html' %}
+<div class="container">
+    <h1 class="my-4" style="color: #007bff;">Добавить автомобиль</h1>
+    <form action="{{ url_for('upload_car') }}" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="name">Название:</label>
+            <input type="text" id="name" name="name" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="category">Категория:</label>
+            <input type="text" id="category" name="category" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="license_plate">Гос. номер:</label>
+            <input type="text" id="license_plate" name="license_plate" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="photo">Фото:</label>
+            <input type="file" id="photo" name="photo" class="form-control-file" accept="image/*" required>
+        </div>
+        <button type="submit" class="btn btn-success">Загрузить</button>
+    </form>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary my-4">Вернуться к списку</a>
+</div>
+{% endblock %}
